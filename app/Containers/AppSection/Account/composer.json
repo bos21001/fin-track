@@ -1,0 +1,6 @@
+{
+    "name": "apiato/account",
+    "description": "Account Container for apiato.",
+    "require": {
+    }
+}
