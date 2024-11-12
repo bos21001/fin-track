@@ -1,18 +1,20 @@
 <!doctype html>
 <html lang="{{ app()->getLocale() }}">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Apiato</title>
+    <title>{{env('APP_NAME') ?? config('app.name')}}</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
     <style>
-        html, body {
+        html,
+        body {
             background-color: #fff;
             color: #636b6f;
             font-family: 'Raleway', sans-serif;
@@ -50,7 +52,7 @@
             color: #00bdf4;
         }
 
-        .links > a {
+        .links>a {
             color: #636b6f;
             padding: 0 25px;
             font-size: 12px;
@@ -89,34 +91,37 @@
         }
     </style>
 </head>
+
 <body>
-<div class="flex-center position-ref full-height">
-    <div class="content">
-        @guest
-            <a href="{{ route('login-page') }}" class="top-right button">Login</a>
-        @endguest
+    <div class="flex-center position-ref full-height">
+        <div class="content">
+            @guest
+                <a href="{{ route('login-page') }}" class="top-right button">Login</a>
+            @endguest
 
-        @auth('web')
-            <form id="form" action="{{ route('logout') }}" method="POST">@csrf</form>
-            <a class="top-right button" href="javascript:void(0)" onclick="document.getElementById('form').submit()">Logout</a>
-        @endauth
+            @auth('web')
+                <form id="form" action="{{ route('logout') }}" method="POST">@csrf</form>
+                <a class="top-right button" href="javascript:void(0)"
+                    onclick="document.getElementById('form').submit()">Logout</a>
+            @endauth
 
-        <div class="title m-b-md">Apiato</div>
+            <div class="title m-b-md">{{env('APP_NAME') ?? config('app.name')}}</div>
 
-        <div class="links m-b-md">
-            <a href="https://apiato.io/">Documentation</a>
-            <a href="https://github.com/apiato/apiato">GitHub</a>
-        </div>
-
-        <hr class="rounded m-b-md">
-
-        @if(Route::has('public_docs') && Route::has('private_docs'))
-            <div class="links">
-                <a href="{{ route('public_docs') }}">Api Public Documentation</a>
-                <a href="{{ route('private_docs') }}">Api Private Documentation</a>
+            <div class="links m-b-md">
+                <a href="https://apiato.io/">Documentation</a>
+                <a href="https://github.com/apiato/apiato">GitHub</a>
             </div>
-        @endif
+
+            <hr class="rounded m-b-md">
+
+            @if (Route::has('public_docs') && Route::has('private_docs'))
+                <div class="links">
+                    <a href="{{ route('public_docs') }}">Api Public Documentation</a>
+                    <a href="{{ route('private_docs') }}">Api Private Documentation</a>
+                </div>
+            @endif
+        </div>
     </div>
-</div>
 </body>
+
 </html>

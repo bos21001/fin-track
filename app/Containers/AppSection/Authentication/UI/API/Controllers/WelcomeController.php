@@ -9,11 +9,13 @@ class WelcomeController extends ApiController
 {
     public function unversioned(): JsonResponse
     {
-        return response()->json('Welcome to Apiato');
+        $title = env("APP_NAME", config("app.name"));
+        return response()->json("Welcome to $title");
     }
 
     public function versioned(): JsonResponse
     {
-        return response()->json('Welcome to Apiato (API V1)');
+        $title = env("APP_NAME", config("app.name"));
+        return response()->json("Welcome to $title (API V1)");
     }
 }
