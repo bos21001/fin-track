@@ -2,12 +2,17 @@
 
 namespace App\Containers\AppSection\User\Models;
 
+use App\Containers\AppSection\Account\Models\Account;
 use App\Containers\AppSection\Authentication\Notifications\VerifyEmail;
+use App\Containers\AppSection\FinanceGroup\Models\FinanceGroup;
+use App\Containers\AppSection\Transaction\Models\Transaction;
 use App\Containers\AppSection\User\Data\Collections\UserCollection;
 use App\Containers\AppSection\User\Enums\Gender;
 use App\Ship\Contracts\MustVerifyEmail;
 use App\Ship\Parents\Models\UserModel as ParentUserModel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends ParentUserModel implements MustVerifyEmail
 {
@@ -75,5 +80,10 @@ class User extends ParentUserModel implements MustVerifyEmail
         return new Attribute(
             get: static fn (string|null $value): string|null => null === $value ? null : strtolower($value),
         );
+    }
+
+    public function financeGroups(): HasMany
+    {
+        return $this->hasMany(FinanceGroup::class);
     }
 }
