@@ -99,7 +99,7 @@ return [
     |
     */
     'allowed-reset-password-urls' => [
-        env('APP_URL', 'http://api.apiato.test') . '/v1/password/reset',
+        env('APP_URL', 'http://api.apiato.test') . '/password/reset',
     ],
 
     /*
@@ -111,6 +111,6 @@ return [
     |
 */
     'allowed-verify-email-urls' => [
-        env('APP_URL', 'http://api.apiato.test') . '/v1/email/verify',
+        env('APP_URL', 'http://api.apiato.test') . '/email/verify',
     ],
 ];
