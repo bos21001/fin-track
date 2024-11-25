@@ -18,7 +18,7 @@ final class WelcomeControllerTest extends UnitTestCase
         $response = $controller->unversioned();
 
         $this->assertTrue($response->isOk());
-        $this->assertSame('"Welcome to Apiato"', $response->getContent());
+        $this->assertSame('"Welcome to fin-track"', $response->getContent());
     }
 
     public function testVersioned(): void
@@ -28,6 +28,6 @@ final class WelcomeControllerTest extends UnitTestCase
         $response = $controller->versioned();
 
         $this->assertTrue($response->isOk());
-        $this->assertSame('"Welcome to Apiato (API V1)"', $response->getContent());
+        $this->assertSame('"Welcome to fin-track (API V1)"', $response->getContent());
     }
 }

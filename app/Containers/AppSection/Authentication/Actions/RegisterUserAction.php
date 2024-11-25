@@ -6,6 +6,7 @@ use Apiato\Core\Exceptions\IncorrectIdException;
 use App\Containers\AppSection\Authentication\Notifications\Welcome;
 use App\Containers\AppSection\Authentication\Tasks\SendVerificationEmailTask;
 use App\Containers\AppSection\Authentication\UI\API\Requests\RegisterUserRequest;
+use App\Containers\AppSection\Authentication\UI\WEB\Requests\RegisterUserRequest as RegisterUserRequestWeb;
 use App\Containers\AppSection\User\Models\User;
 use App\Containers\AppSection\User\Tasks\CreateUserTask;
 use App\Ship\Exceptions\CreateResourceFailedException;
@@ -23,7 +24,7 @@ class RegisterUserAction extends ParentAction
      * @throws CreateResourceFailedException
      * @throws IncorrectIdException
      */
-    public function run(RegisterUserRequest $request): User
+    public function run(RegisterUserRequest|RegisterUserRequestWeb $request): User
     {
         $sanitizedData = $request->sanitizeInput([
             'email',
