@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>Apiato</title>
-    <style>
-        @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sign up or log in to take control of your finances.">
+    <meta name="keywords" content="finances, money, control, budget, expenses, income, savings">
+    <meta name="author" content="Christopher Mendes">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <title>{{ config('app.name') }}</title>
+    <style>
         .login-page {
             width: 360px;
             padding: 8% 0 0;
@@ -18,7 +28,6 @@
             max-width: 360px;
             margin: 0 auto 100px;
             padding: 45px;
-            text-align: center;
             box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
         }
 
@@ -44,12 +53,13 @@
             padding: 15px;
             color: #FFFFFF;
             font-size: 14px;
-            -webkit-transition: all 0.3s ease;
             transition: all 0.3s ease;
             cursor: pointer;
         }
 
-        .form button:hover, .form button:active, .form button:focus {
+        .form button:hover,
+        .form button:active,
+        .form button:focus {
             background: #43A047;
         }
 
@@ -68,10 +78,8 @@
             display: none;
         }
 
-        h1 {
-            margin: 0 0 15px;
+        h2 {
             padding: 0;
-            font-size: 36px;
             font-weight: 300;
             color: #1a1a1a;
         }
@@ -97,25 +105,102 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="login-page">
-    <h1 class="center">Login</h1>
-    <form class="form" action="{{ route('login') }}" method="post">
-        @csrf
-        @if(session('login'))
-            <div class="text-red">{{ session('login') }}</div>
-        @endif
-        <label class="hide" for="email">Email</label>
-        <input type="text" placeholder="email" id="email" name="email"/>
-        <span class="text-red">{{ $errors->first('email') }}</span>
-        <label class="hide" for="password">Password</label>
-        <input type="password" placeholder="password" id="password" name="password"/>
-        <span class="text-red">{{ $errors->first('password') }}</span>
+    <div class="login-page">
+        <h1 class="center">Welcome to {{ config('app.name') }}</h1>
+        <h2 class="center">Have control over your finances</h2>
+        <form class="form" action="{{ route('login') }}" method="post">
+            @csrf
+            @if (session('login'))
+                <div class="text-red">{{ session('login') }}</div>
+            @endif
+            <label for="email">Type your email to start</label>
+            <input type="email" placeholder="your@email.com" id="email" name="email" aria-label="email" required
+                autocomplete="username">
+            <span class="text-red">{{ $errors->first('email') }}</span>
+            <label class="hide" for="password">Password</label>
+            <input class="hide" type="password" placeholder="password" id="password" name="password"
+                aria-label="password" autocomplete="current-password">
+            <label class="hide" for="password_confirmation">Confirm Password</label>
+            <input class="hide" type="password" placeholder="Re-type your password" id="password_confirmation"
+                name="password_confirmation" aria-label="password_confirmation" autocomplete="new-password">
+            <span class="text-red">{{ $errors->first('password_confirmation') }}</span>
+            <label class="hide" for="verification_url">Verification URL</label>
+            <input class="hide" type="text" id="verification_url" name="verification_url"
+                value="{{ config('appSection-authentication.allowed-verify-email-urls.0') }}"
+                aria-label="verification_url">
+            <span class="text-red">{{ $errors->first('password') }}</span>
 
-        <button>login</button>
-    </form>
-</div>
+            <a href="#">I need help</a>
+
+            <button>Next</button>
+        </form>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const button = document.querySelector('button');
+
+            cleanErrors();
+
+            button.disabled = true;
+            button.textContent = 'Processing...';
+
+            if (!password && email) {
+                e.preventDefault();
+                checkEmail(email, button);
+            }
+        });
+
+        function checkEmail(email, button) {
+            const apiUrl = `{{ route('authentication.email.check') }}?email=${encodeURIComponent(email)}`;
+
+            fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                    }
+                })
+                .then(response => response.ok ? response.json() : Promise.reject('Network response was not ok.'))
+                .then(data => handleEmailCheckResponse(data, button))
+                .catch(() => handleEmailCheckError(button));
+        }
+
+        function handleEmailCheckResponse(data, button) {
+            document.getElementById('password').classList.remove('hide');
+            document.querySelector('label[for="email"]').classList.add('hide');
+            button.disabled = false;
+            button.textContent = 'Sign Up';
+        }
+
+        function handleEmailCheckError(button) {
+            document.getElementById('password').classList.remove('hide');
+            document.getElementById('password').setAttribute('autocomplete', 'new-password');
+            document.getElementById('password_confirmation').classList.remove('hide');
+            document.querySelector('form').action = "{{ route('register') }}";
+            document.querySelector('h1').textContent = 'Sign up now and take charge of your finances!';
+            document.querySelector('button').textContent = 'Register';
+            button.disabled = false;
+            document.querySelector('h2').classList.add('hide');
+        }
+
+        function cleanErrors() {
+            document.querySelectorAll('.text-red').forEach(function(el) {
+                el.textContent = '';
+            });
+        }
+    </script>
+
+    {{-- TODO: If error on creating user, make sure the form comes back to the sign up form again --}}
+    {{-- TODO: If user is created, show a message to check the email to verify the account --}}
 
 </body>
+
 </html>
